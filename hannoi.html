@@ -2,6 +2,7 @@
 <html lang="zh">
   <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>汉诺塔</title>
     <style type="text/css">
      html, body {
@@ -12,6 +13,17 @@
        display: flex;
        align-items: center;
        justify-content: center;
+       flex-direction: column;
+     }
+     #control {
+       margin-bottom: 10%;
+     }
+     #control > * {
+       margin: 0.25em 0;
+     }
+     #control > button {
+       margin-left: 50%;
+       transform: translateX(-50%);
      }
      #hannoi {
        width: 90%;
@@ -61,6 +73,11 @@
 
   </head>
   <body>
+    <div id="control">
+      盘子个数：<input id="size" type="number" value="3"/> <br />
+      移动间隔：<input id="dely" type="number" value="400"/> <br />
+      <button id="start" onclick="start()">开始</button>
+    </div>
     <div id="hannoi">
       <div id="pillara">
       </div>
@@ -73,7 +90,9 @@
   <script type="text/javascript">
    const pillara = document.getElementById("pillara"),
          pillarb = document.getElementById("pillarb"),
-         pillarc = document.getElementById("pillarc");
+         pillarc = document.getElementById("pillarc"),
+         size = document.getElementById("size"),
+         delay = document.getElementById("dely");
    function fillPillar(num, pillar) {
      for (let i = num; i > 0; i--) {
        let plate = document.createElement('div');
@@ -106,12 +125,16 @@
      while (all.length)
        all[0].remove();
    }
-   function init(num, slp) {
+   async function init(num, slp) {
      clearBlock();
      fillPillar(num, pillara);
-     hannoi(num, pillara, pillarc, pillarb, slp || 10);
+     await hannoi(num, pillara, pillarc, pillarb, slp || 10);
    }
-   init(64, 1);
+   async function start() {
+     document.getElementById("start").style.visibility = "hidden";
+     await init(Number(size.value),Number(dely.value));
+     document.getElementById("start").style.visibility = "";
+   }
   </script>
 
 </html>
