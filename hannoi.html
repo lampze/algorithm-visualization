@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>汉诺塔</title>
+    <style type="text/css">
+     html, body {
+       width: 100%;
+       height: 100%;
+       padding: 0;
+       margin: 0;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+     }
+     #hannoi {
+       width: 90%;
+       height: 80%;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+     }
+     #hannoi > div {
+       width: 30%;
+       height: 100%;
+       float: left;
+       position: relative;
+       display: flex;
+       flex-direction: column-reverse;
+       padding-bottom: 1.5em;
+       box-sizing: border-box;
+     }
+     #hannoi > div::before {
+       content: '';
+       display: block;
+       background-color: #789;
+       height: 100%;
+       width: 1em;
+       margin-left: 50%;
+       position: absolute;
+       transform: translate(-50%, 1.5em);
+       z-index: -1;
+     }
+     #hannoi > div::after {
+       content: '';
+       display: block;
+       background-color: #456;
+       height: 1.5em;
+       width: 100%;
+       bottom: 0;
+       position: absolute;
+       z-index: -1;
+     }
+     #pillarb {
+       margin: 0 5%;
+     }
+     #hannoi .block {
+       margin: 0 auto;
+     }
+    </style>
+
+  </head>
+  <body>
+    <div id="hannoi">
+      <div id="pillara">
+      </div>
+      <div id="pillarb">
+      </div>
+      <div id="pillarc">
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+   const pillara = document.getElementById("pillara"),
+         pillarb = document.getElementById("pillarb"),
+         pillarc = document.getElementById("pillarc");
+   function fillPillar(num, pillar) {
+     for (let i = num; i > 0; i--) {
+       let plate = document.createElement('div');
+       plate.style.cssText = `width:${90 / num * i}%;height: ${96 / num}%;background-color: rgb(${210 / num * i},${220 / num * i},${230 / num * i});`;
+       plate.classList.add('block');
+       plate.now = pillar;
+       plate.moveto = to => {
+         plate.now.removeChild(plate);
+         plate.now = to;
+         plate.now.appendChild(plate);
+       }
+       pillar.appendChild(plate);
+     }
+   }
+   const sleep = (time) => {
+     return new Promise(resolve => setTimeout(resolve, time))
+   }
+   async function hannoi(num, form, to, temp, slp) {
+     if (num > 1) {
+       await hannoi(num - 1, form, temp, to, slp);
+       await hannoi(1, form, to, temp, slp);
+       await hannoi(num - 1, temp, to, form, slp);
+     } else if (num == 1) {
+       await sleep(slp || 1);
+       form.lastElementChild.moveto(to);
+     }
+   }
+   function clearBlock() {
+     let all = document.getElementsByClassName('block');
+     while (all.length)
+       all[0].remove();
+   }
+   function init(num, slp) {
+     clearBlock();
+     fillPillar(num, pillara);
+     hannoi(num, pillara, pillarc, pillarb, slp || 10);
+   }
+   init(64, 1);
+  </script>
+
+</html>
